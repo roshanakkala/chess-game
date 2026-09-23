@@ -429,6 +429,10 @@ button {
   background: #789b8e;
 }
 
+.selected {
+  background: #f6d76e;
+}
+
 .players {
   display: flex;
   justify-content: space-between;

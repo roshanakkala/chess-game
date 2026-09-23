@@ -35,10 +35,43 @@ async function getRoom(roomId) {
 async function saveRoom() {
   room.fen = chess.fen();
   await database.ref("rooms/" + room.id).update({
+    host: room.host,
+    guest: room.guest,
+    started: room.started,
     fen: room.fen
   });
 }
-function createRoom() {
+
+function watchRoom(roomId) {
+  database.ref("rooms/" + roomId).on("value", (snapshot) => {
+    if (!snapshot.exists()) {
+      $("roomMessage").textContent = "This room is no longer available.";
+      return;
+    }
+
+    const updatedRoom = snapshot.val();
+    const fenChanged = !room || room.fen !== updatedRoom.fen;
+    room = { ...room, ...updatedRoom };
+
+    if (fenChanged && chess && $("game").hidden === false) {
+      chess = new Chess(room.fen);
+      drawBoard();
+      updateGameStatus();
+    }
+
+    if (currentMode === "host" && $("modal").hidden === false) {
+      showHostRoom();
+    } else if (currentMode === "guest" && $("modal").hidden === false) {
+      showGuestWaiting();
+    }
+
+    if (room.started && $("game").hidden) {
+      openGame();
+    }
+  });
+}
+
+async function createRoom() {
   const name = $("playerName").value.trim() || "Host";
 
   room = {
@@ -52,7 +85,15 @@ function createRoom() {
   };
 
   chess = new Chess(room.fen);
-  saveRoom();
+  try {
+    await database.ref("rooms/" + room.id).set(room);
+  } catch (error) {
+    $("roomMessage").textContent =
+      "Unable to create the room. Check the Firebase configuration and database rules.";
+    console.error("Room creation failed:", error);
+    return;
+  }
+  watchRoom(room.id);
   currentMode = "host";
   showHostRoom();
 }
@@ -76,9 +117,18 @@ function showHostRoom() {
     : "Share the invite link with your friend.";
 }
 
-function joinRoom() {
+async function joinRoom() {
   const name = $("playerName").value.trim() || "Guest";
-  const requestedRoom = getRoom(joinedRoomId);
+  let requestedRoom;
+
+  try {
+    requestedRoom = await getRoom(joinedRoomId);
+  } catch (error) {
+    $("roomMessage").textContent =
+      "Unable to connect to the room. Check the Firebase configuration and database rules.";
+    console.error("Room lookup failed:", error);
+    return;
+  }
 
   if (!requestedRoom) {
     $("roomMessage").textContent =
@@ -88,10 +138,17 @@ function joinRoom() {
 
   room = requestedRoom;
   room.guest = name;
-  room.started = false;
+  try {
+    await database.ref("rooms/" + joinedRoomId).update({ guest: name });
+  } catch (error) {
+    $("roomMessage").textContent =
+      "Unable to join the room. Check the Firebase database rules.";
+    console.error("Room join failed:", error);
+    return;
+  }
   chess = new Chess(room.fen);
   currentMode = "guest";
-  saveRoom();
+  watchRoom(joinedRoomId);
   showGuestWaiting();
 }
 
@@ -107,13 +164,21 @@ function showGuestWaiting() {
   $("roomMessage").textContent = "Waiting for the host to start the game.";
 }
 
-function startRoom() {
+async function startRoom() {
   if (currentMode !== "host" || !room.guest) {
     return;
   }
 
   room.started = true;
-  saveRoom();
+  try {
+    await database.ref("rooms/" + room.id).update({ started: true });
+  } catch (error) {
+    room.started = false;
+    $("roomMessage").textContent =
+      "Unable to start the game. Check the Firebase database rules.";
+    console.error("Starting room failed:", error);
+    return;
+  }
   openGame();
 }
 

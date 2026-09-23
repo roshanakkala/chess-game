@@ -1,10 +1,64 @@
 const $ = (id) => document.getElementById(id);
-const database = firebase.database();
+const database = (() => {
+  if (!window.firebase || !window.firebase.apps || !window.firebase.apps.length) {
+    return null;
+  }
 
+  try {
+    return window.firebase.database();
+  } catch (error) {
+    console.warn("Firebase database is unavailable:", error);
+    return null;
+  }
+})();
 
 const query = new URLSearchParams(window.location.search);
 const joinedRoomId = query.get("room");
 const roomStorageKey = (roomId) => `chess-room-${roomId}`;
+
+function readStoredRoom(roomId) {
+  try {
+    const stored = localStorage.getItem(roomStorageKey(roomId));
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.warn("Unable to read local room state:", error);
+    return null;
+  }
+}
+
+function writeStoredRoom(room) {
+  try {
+    localStorage.setItem(roomStorageKey(room.id), JSON.stringify(room));
+  } catch (error) {
+    console.warn("Unable to save local room state:", error);
+  }
+}
+
+function applyRoomState(updatedRoom) {
+  if (!updatedRoom) {
+    $("roomMessage").textContent = "This room is no longer available.";
+    return;
+  }
+
+  const fenChanged = !room || room.fen !== updatedRoom.fen;
+  room = { ...room, ...updatedRoom };
+
+  if (fenChanged && chess && $("game").hidden === false) {
+    chess = new Chess(room.fen);
+    drawBoard();
+    updateGameStatus();
+  }
+
+  if (currentMode === "host" && $("modal").hidden === false) {
+    showHostRoom();
+  } else if (currentMode === "guest" && $("modal").hidden === false) {
+    showGuestWaiting();
+  }
+
+  if (room.started && $("game").hidden) {
+    openGame();
+  }
+}
 
 let room = null;
 let chess = null;
@@ -28,46 +82,42 @@ const pieceSymbols = {
 };
 
 async function getRoom(roomId) {
+  if (!database) {
+    return readStoredRoom(roomId);
+  }
+
   const snapshot = await database.ref("rooms/" + roomId).once("value");
   return snapshot.exists() ? snapshot.val() : null;
 }
 
 async function saveRoom() {
+  if (!room) {
+    return;
+  }
+
   room.fen = chess.fen();
-  await database.ref("rooms/" + room.id).update({
-    host: room.host,
-    guest: room.guest,
-    started: room.started,
-    fen: room.fen
-  });
+
+  if (database) {
+    await database.ref("rooms/" + room.id).update({
+      host: room.host,
+      guest: room.guest,
+      started: room.started,
+      fen: room.fen
+    });
+  }
+
+  writeStoredRoom(room);
 }
 
 function watchRoom(roomId) {
+  if (!database) {
+    const storedRoom = readStoredRoom(roomId);
+    applyRoomState(storedRoom);
+    return;
+  }
+
   database.ref("rooms/" + roomId).on("value", (snapshot) => {
-    if (!snapshot.exists()) {
-      $("roomMessage").textContent = "This room is no longer available.";
-      return;
-    }
-
-    const updatedRoom = snapshot.val();
-    const fenChanged = !room || room.fen !== updatedRoom.fen;
-    room = { ...room, ...updatedRoom };
-
-    if (fenChanged && chess && $("game").hidden === false) {
-      chess = new Chess(room.fen);
-      drawBoard();
-      updateGameStatus();
-    }
-
-    if (currentMode === "host" && $("modal").hidden === false) {
-      showHostRoom();
-    } else if (currentMode === "guest" && $("modal").hidden === false) {
-      showGuestWaiting();
-    }
-
-    if (room.started && $("game").hidden) {
-      openGame();
-    }
+    applyRoomState(snapshot.exists() ? snapshot.val() : null);
   });
 }
 
@@ -85,8 +135,12 @@ async function createRoom() {
   };
 
   chess = new Chess(room.fen);
+  writeStoredRoom(room);
+
   try {
-    await database.ref("rooms/" + room.id).set(room);
+    if (database) {
+      await database.ref("rooms/" + room.id).set(room);
+    }
   } catch (error) {
     $("roomMessage").textContent =
       "Unable to create the room. Check the Firebase configuration and database rules.";
@@ -138,8 +192,12 @@ async function joinRoom() {
 
   room = requestedRoom;
   room.guest = name;
+  writeStoredRoom(room);
+
   try {
-    await database.ref("rooms/" + joinedRoomId).update({ guest: name });
+    if (database) {
+      await database.ref("rooms/" + joinedRoomId).update({ guest: name });
+    }
   } catch (error) {
     $("roomMessage").textContent =
       "Unable to join the room. Check the Firebase database rules.";
@@ -170,8 +228,12 @@ async function startRoom() {
   }
 
   room.started = true;
+  writeStoredRoom(room);
+
   try {
-    await database.ref("rooms/" + room.id).update({ started: true });
+    if (database) {
+      await database.ref("rooms/" + room.id).update({ started: true });
+    }
   } catch (error) {
     room.started = false;
     $("roomMessage").textContent =

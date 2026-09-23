@@ -1,4 +1,7 @@
 const $ = (id) => document.getElementById(id);
+const database = firebase.database();
+
+
 const query = new URLSearchParams(window.location.search);
 const joinedRoomId = query.get("room");
 const roomStorageKey = (roomId) => `chess-room-${roomId}`;
@@ -24,16 +27,17 @@ const pieceSymbols = {
   bk: "♚"
 };
 
-function getRoom(roomId) {
-  const saved = localStorage.getItem(roomStorageKey(roomId));
-  return saved ? JSON.parse(saved) : null;
+async function getRoom(roomId) {
+  const snapshot = await database.ref("rooms/" + roomId).once("value");
+  return snapshot.exists() ? snapshot.val() : null;
 }
 
-function saveRoom() {
+async function saveRoom() {
   room.fen = chess.fen();
-  localStorage.setItem(roomStorageKey(room.id), JSON.stringify(room));
+  await database.ref("rooms/" + room.id).update({
+    fen: room.fen
+  });
 }
-
 function createRoom() {
   const name = $("playerName").value.trim() || "Host";
 

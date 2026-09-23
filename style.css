@@ -1,0 +1,486 @@
+:root {
+  --ink: #202b2b;
+  --muted: #6f7b78;
+  --cream: #f8f7f2;
+  --green: #2f605a;
+  --yellow: #f5c451;
+  --line: #dfe4df;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font: 14px "Trebuchet MS", sans-serif;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.topbar,
+.game-header {
+  height: 76px;
+  padding: 0 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  color: var(--ink);
+  font-size: 21px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.brand-mark {
+  color: var(--green);
+  font-size: 29px;
+}
+
+.brand-dot {
+  color: var(--yellow);
+}
+
+.online {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.online i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  background: #78b97c;
+  border-radius: 50%;
+}
+
+.hero {
+  max-width: 1120px;
+  min-height: 510px;
+  margin: auto;
+  padding: 70px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-copy {
+  max-width: 500px;
+}
+
+.eyebrow {
+  color: var(--green);
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.hero h1 {
+  margin: 15px 0;
+  font: 600 clamp(45px, 7vw, 76px) / 1 Georgia, serif;
+  letter-spacing: -3px;
+}
+
+.hero h1 em {
+  color: var(--green);
+  font-style: normal;
+}
+
+.hero-description {
+  max-width: 420px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin: 28px 0;
+}
+
+.primary-button,
+.secondary-button {
+  padding: 14px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.primary-button {
+  background: var(--green);
+  color: white;
+}
+
+.secondary-button {
+  background: #e6eee6;
+  color: var(--green);
+}
+
+.primary-button span,
+.secondary-button span,
+.card-link span {
+  margin-left: 18px;
+}
+
+.trust {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.trust b {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 0 12px;
+  background: #aab8b0;
+  border-radius: 50%;
+}
+
+.hero-board {
+  width: 390px;
+  height: 390px;
+  display: grid;
+  place-items: center;
+  background: #d7e4d9;
+  border-radius: 50%;
+}
+
+.board-art {
+  width: 82%;
+  height: 82%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  background: #789b8e;
+  border: 9px solid white;
+  box-shadow: 18px 25px 45px #34574a30;
+  transform: rotate(3deg);
+}
+
+.board-art::after {
+  padding: 8px;
+  color: #f8f4e9;
+  content: "♜♞♝♛♚♝♞♜♟♟♟♟♟♟♟♟";
+  font: 30px Georgia;
+  line-height: 1.9;
+  word-spacing: 16px;
+}
+
+.modes {
+  padding: 65px 20px;
+  background: #f0f3ed;
+  text-align: center;
+}
+
+.modes h2 {
+  margin: 10px 0 32px;
+  font: 600 34px Georgia;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 390px));
+  gap: 20px;
+  justify-content: center;
+  text-align: left;
+}
+
+.mode-card {
+  min-height: 225px;
+  padding: 28px;
+  border-radius: 5px;
+}
+
+.mode-card.green {
+  background: #d9e5da;
+}
+
+.mode-card.gold {
+  background: #f5e9cb;
+}
+
+.mode-card strong {
+  display: block;
+  height: 45px;
+  color: var(--green);
+  font-size: 30px;
+}
+
+.mode-card small {
+  color: var(--green);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.mode-card h3 {
+  margin: 9px 0;
+  font: 23px Georgia;
+}
+
+.mode-card p {
+  max-width: 320px;
+  color: #63736d;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.card-link {
+  padding: 0;
+  background: none;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  padding: 20px;
+  background: #1d3330aa;
+  place-items: center;
+}
+
+.modal {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 35px;
+  background: var(--cream);
+  border-radius: 6px;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  background: none;
+  color: var(--muted);
+  font-size: 25px;
+}
+
+.modal-icon {
+  color: var(--green);
+  font-size: 30px;
+}
+
+.modal h2 {
+  margin: 10px 0;
+  font: 30px Georgia;
+}
+
+.modal p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.modal label {
+  display: block;
+  margin: 18px 0 6px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.modal input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 13px;
+  border: 1px solid var(--line);
+}
+
+.full {
+  width: 100%;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.slot {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  padding: 12px;
+  background: #e6eee6;
+}
+
+.slot span {
+  grid-row: span 2;
+  color: var(--green);
+  font-size: 21px;
+}
+
+.slot b,
+.slot small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slot small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.waiting {
+  background: #f5f1e5;
+  border: 1px dashed #bbc6b9;
+}
+
+.invite {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  padding: 5px;
+  background: white;
+  border: 1px solid var(--line);
+}
+
+.invite span {
+  flex: 1;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.invite button {
+  padding: 9px;
+  background: var(--green);
+  color: white;
+  font-size: 11px;
+}
+
+.room-message {
+  min-height: 15px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.game {
+  min-height: 100vh;
+  background: #f1f3ef;
+}
+
+.game-header {
+  background: var(--cream);
+}
+
+.back {
+  background: none;
+  color: var(--muted);
+}
+
+.game-content {
+  max-width: 1000px;
+  margin: auto;
+  padding: 45px 20px;
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  gap: 40px;
+}
+
+.game-content h2 {
+  font: 32px Georgia;
+}
+
+.turn {
+  display: inline-block;
+  padding: 9px 14px;
+  background: #d9e5da;
+  border-radius: 20px;
+  color: var(--green);
+  font-size: 11px;
+}
+
+.chessboard {
+  width: min(70vw, 600px);
+  height: min(70vw, 600px);
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  margin-top: 18px;
+  border: 8px solid white;
+  box-shadow: 0 12px 30px #34574a22;
+}
+
+.square {
+  font: clamp(22px, 6vw, 54px) Georgia;
+}
+
+.light {
+  background: #e9dfc9;
+}
+
+.dark {
+  background: #789b8e;
+}
+
+.players {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.game-content aside {
+  height: max-content;
+  margin-top: 55px;
+  padding: 25px;
+  background: white;
+}
+
+.game-content aside p:last-child {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    padding: 0 20px;
+  }
+
+  .hero {
+    display: block;
+    padding-top: 45px;
+  }
+
+  .hero-board {
+    width: 80vw;
+    height: 80vw;
+    margin: 45px auto 0;
+  }
+
+  .mode-grid,
+  .game-content {
+    grid-template-columns: 1fr;
+  }
+
+  .game-content aside {
+    display: none;
+  }
+
+  .chessboard {
+    width: calc(100vw - 40px);
+    height: calc(100vw - 40px);
+  }
+}

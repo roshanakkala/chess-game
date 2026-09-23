@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkmate — Play together</title>
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="./"><span class="brand-mark">♞</span> checkmate<span class="brand-dot">.</span></a><span class="online"><i></i> Chess rooms are open</span></header>
+<main id="home">
+  <section class="hero"><div class="hero-copy"><p class="eyebrow">YOUR NEXT MOVE STARTS HERE</p><h1>Think ahead.<br><em>Play together.</em></h1><p class="hero-description">Create a room, invite a friend, or sharpen your game against the computer.</p><div class="hero-actions"><button class="primary-button" data-action="room">Create a room <span>→</span></button><button class="secondary-button" data-action="computer">Play computer <span>♟</span></button></div><p class="trust">♟ No sign-up required <b></b> Free to play</p></div><div class="hero-board"><div class="board-art" id="boardArt"></div></div></section>
+  <section class="modes"><p class="eyebrow">CHOOSE YOUR GAME</p><h2>How do you want to play?</h2><div class="mode-grid"><article class="mode-card green" data-action="room"><strong>♙♞</strong><small>SOCIAL PLAY</small><h3>Create a room</h3><p>Invite a friend with a link. The game starts when the host starts the room.</p><button class="card-link">Generate invite link <span>→</span></button></article><article class="mode-card gold" data-action="computer"><strong>♟</strong><small>SOLO PRACTICE</small><h3>Play the computer</h3><p>Practice openings, test ideas, and improve your game at your own pace.</p><button class="card-link">Start practicing <span>→</span></button></article></div></section>
+</main>
+<div class="modal-backdrop" id="modal" hidden><section class="modal"><button class="close" id="closeModal">×</button><div class="modal-icon" id="modalIcon">♙♞</div><p class="eyebrow" id="modalEyebrow">PRIVATE ROOM</p><h2 id="modalTitle">Create a room</h2><p id="modalText">Add your name, then generate a link to invite your friend.</p><label for="playerName">Your name</label><input id="playerName" maxlength="24" placeholder="e.g. Alex"><button class="primary-button full" id="modalAction">Generate invite link <span>→</span></button><div class="slots" id="slots" hidden><div class="slot"><span>♙</span><b id="hostName">Host</b><small>Room creator</small></div><div class="slot waiting"><span>♙</span><b id="guestName">Waiting for friend…</b><small id="guestStatus">Open the invite link to join</small></div></div><div class="invite" id="invite" hidden><span id="inviteUrl"></span><button id="copyLink">Copy link</button></div><p class="room-message" id="roomMessage"></p></section></div>
+<section class="game" id="game" hidden><header class="game-header"><button class="back" id="backHome">← Back home</button><strong>♞ checkmate<span class="brand-dot">.</span></strong><button class="back" id="newGame">New game</button></header><div class="game-content"><div><p class="eyebrow">CASUAL GAME</p><h2>Your private game</h2><div class="turn">White's turn</div><div class="chessboard" id="chessboard"></div><div class="players"><span>♙ <b id="whitePlayer">Host</b></span><span><b id="blackPlayer">Friend</b> ♟</span></div></div><aside><p class="eyebrow">GAME DETAILS</p><h3 id="detailsTitle">Room started</h3><p id="detailsText">Both players are ready. Make your move.</p></aside></div></section>
+<script src="static/script.js"></script>
+</body>
+</html>
